@@ -7,7 +7,7 @@ Compile rust FILEs and summarize compilation status, test status and
 errors. When FILE is -, read standard input.  This file is meant to be
 called from a Makefile.
 
-    -b          only compile FILE regularly, don't test
+    -b          only compile FILE regularly, don\'t test
     -h          print this help
     -t          only compile FILEs with --test
 EOF
@@ -115,28 +115,6 @@ compilation_status_to_string() {
 
 lint_results=''
 
-80_column_lint() {
-    local source_file="$1"
-    if grep  -q '.\{81,\}' "$source_file"; then
-        lint_results+="\n  $source_file: warning: file contains lines over 80 \
-columns"
-    fi
-}
-
-trailing_whitespace_lint() {
-    local source_file="$1"
-    if grep -Eq ".* +$" "$source_file"; then
-        lint_results+="\n  $source_file: warning: file contains trailing \
-whitespace"
-    fi
-}
-
-run_all_lints() {
-    local source_file="$1"
-    80_column_lint "$source_file"
-    trailing_whitespace_lint "$source_file"
-}
-
 # Used to delimit compilation output, test output, etc.
 section_bullet="\n ${BLUE}*${RESTORE}"
 
@@ -173,7 +151,6 @@ annotate no tests with #![cfg(not_tested)]"
     fi
 
     if "$test_only"; then
-        run_all_lints "$source_file"
 
         if [[ "$lint_results" ]]; then
             lint_results=" $section_bullet Lint Results$lint_results"
@@ -283,7 +260,6 @@ build_rust_file() {
         fi
     fi
 
-    run_all_lints "$source_file"
     if [[ "$lint_results" ]]; then
         lint_results=" $section_bullet Lint Results$lint_results"
     fi
@@ -301,7 +277,15 @@ build_rust_file() {
 $test_output$test_failures$lint_results"
 }
 
+prettify_rust_file() {
+    local source_file="$1"
+    # --pretty can't copy over in place. :(
+    rustc --pretty normal $source_file > ${TEST_DIR-build-tests}/pretty
+    mv ${TEST_DIR-build-tests}/pretty $source_file
+}
+
 for f in "$@"; do
+    prettify_rust_file "$f"
     if "$test_only"; then
         test_rust_file "$f"
     else
