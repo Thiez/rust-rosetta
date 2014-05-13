@@ -5,9 +5,7 @@ fn main() {
     let paths = ["input.txt", "docs"];
     for path in paths.iter().map(|&x| Path::new(x)) {
         if path.exists() {
-            println!("{} exists.", path.display());
-        } else {
-            println!("{} does not exist.", path.display());
-        }
+            println!("{} exists." , path . display ( ));
+        } else { println!("{} does not exist." , path . display ( )); }
     }
 }

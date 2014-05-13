@@ -11,12 +11,12 @@ fn main() {
     println!("Guess my number between 1 and 10");
 
     let mut input = BufferedReader::new(stdin());
-    loop {
+    loop  {
         let line = input.read_line().unwrap();
         match from_str::<int>(line.trim()) {
-            Some(number) if (number == mystery_number) => break,
+            Some(number) if (number == mystery_number) => break ,
             Some(_) => println!("Wrong! Try again!"),
-            None    => println!("Please enter an integer")
+            None => println!("Please enter an integer")
         }
     }
 

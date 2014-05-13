@@ -11,10 +11,10 @@ use test::Bencher;
 #[cfg(not(test))]
 fn main() {
     for num in range(0i32, 16i32) {
-        println!("Sequential: {}: {}", num, nQueens(num));
+        println!("Sequential: {}: {}" , num , nQueens ( num ));
     }
     for num in range(0i32, 16i32) {
-        println!("Parallel: {}: {}", num, semiParallelNQueens(num));
+        println!("Parallel: {}: {}" , num , semiParallelNQueens ( num ));
     }
 }
 
@@ -31,7 +31,7 @@ fn main() {
 // given n.
 fn nQueens(n: i32) -> uint {
     // Pass off to our helper function.
-    return nQueensHelper((1 << n) -1, 0, 0, 0);
+    return nQueensHelper((1 << n) - 1, 0, 0, 0);
 }
 
 // The meat of the algorithm is in here, a recursive helper function
@@ -53,7 +53,8 @@ fn nQueens(n: i32) -> uint {
 //
 // This implementation is optimized for speed and memory by using
 // integers and bit shifting instead of arrays for storing the conflicts.
-fn nQueensHelper(allOnes: i32, leftDiags: i32, columns: i32, rightDiags: i32) -> uint {
+fn nQueensHelper(allOnes: i32, leftDiags: i32, columns: i32, rightDiags: i32)
+ -> uint {
     // allOnes is a special value that simply has all 1s in the first
     // n positions and 0s elsewhere. We can use it to clear out
     // areas that we don't care about.
@@ -89,21 +90,19 @@ fn nQueensHelper(allOnes: i32, leftDiags: i32, columns: i32, rightDiags: i32) ->
 
         // Make a recursive call. This is where we infer the conflicts
         // for the next row.
-        solutions += nQueensHelper(
-            allOnes,
-            // We add a conflict in the current spot and then shift left,
-            // which has the desired effect of moving all of the conflicts
-            // that are created by left diagonals to the left one square.
-            (leftDiags | spot) << 1,
-
-            // For columns we simply mark this column as filled by ORing
-            // in the currentSpot.
-            (columns | spot),
-
-            // This is the same as the leftDiag shift, except we shift
-            // right because these conflicts are caused by right
-            // diagonals.
-            (rightDiags | spot) >> 1);
+        solutions +=
+            nQueensHelper(allOnes,
+                          // We add a conflict in the current spot and then shift left,
+                          // which has the desired effect of moving all of the conflicts
+                          // that are created by left diagonals to the left one square.
+                          (leftDiags | spot) << 1,
+                          // For columns we simply mark this column as filled by ORing
+                          // in the currentSpot.
+                          (columns | spot),
+                          // This is the same as the leftDiag shift, except we shift
+                          // right because these conflicts are caused by right
+                          // diagonals.
+                          (rightDiags | spot) >> 1);
     }
 
     // If columns is all blocked (i.e. if it is all ones) then we
@@ -130,18 +129,13 @@ fn semiParallelNQueens(n: i32) -> uint {
         let (tx, rx) = channel();
         receivers.push(rx);
         spawn(proc() {
-            tx.send(nQueensHelper(
-                allOnes,
-                (leftDiags | spot) << 1,
-                (columns | spot),
-                (rightDiags | spot) >> 1));
-        });
+              tx.send(nQueensHelper(allOnes, (leftDiags | spot) << 1,
+                                    (columns | spot),
+                                    (rightDiags | spot) >> 1)); });
     }
 
     let mut results = Vec::new();
-    for receiver in receivers.iter() {
-        results.push(receiver.recv());
-    }
+    for receiver in receivers.iter() { results.push(receiver.recv()); }
     return results.iter().map(|&x| x).sum() + ((columns == allOnes) as uint)
 }
 
@@ -149,17 +143,17 @@ fn semiParallelNQueens(n: i32) -> uint {
 
 #[test]
 fn test_nQueens() {
-    let real = vec!(1, 1, 0, 0, 2, 10, 4, 40, 92u);
+    let real = vec!(1 , 1 , 0 , 0 , 2 , 10 , 4 , 40 , 92u);
     for num in range(0, 9i32) {
-        assert!(nQueens(num) == *real.get(num as uint));
+        assert!(nQueens ( num ) == * real . get ( num as uint ));
     }
 }
 
 #[test]
 fn test_parallel_nQueens() {
-    let real = vec!(1, 1, 0, 0, 2, 10, 4, 40, 92u);
+    let real = vec!(1 , 1 , 0 , 0 , 2 , 10 , 4 , 40 , 92u);
     for num in range(0, 9i32) {
-        assert!(semiParallelNQueens(num) == *real.get(num as uint));
+        assert!(semiParallelNQueens ( num ) == * real . get ( num as uint ));
     }
 }
 

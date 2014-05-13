@@ -16,10 +16,10 @@ fn main() {
     let subset1 = range(2, 5).collect::<HashSet<int>>();
 
     // Test if element is member of the set
-    assert!(set1.contains(&1));
+    assert!(set1 . contains ( & 1 ));
 
     // Test if subset1 is subset of set1
-    assert!(subset1.is_subset(&set1));
+    assert!(subset1 . is_subset ( & set1 ));
 
     // Test if set1_copy is equal to set1
     let set1_copy = set1.clone();
@@ -27,19 +27,13 @@ fn main() {
 
     println!("");
     println!("Print the union of set1 and set2");
-    for num in set1.union(&set2) {
-        println!("{}", num);
-    }
+    for num in set1.union(&set2) { println!("{}" , num); }
 
     println!("");
     println!("Print the intersection of set1 and set2");
-    for num in set1.intersection(&set2) {
-        println!("{}", num);
-    }
+    for num in set1.intersection(&set2) { println!("{}" , num); }
 
     println!("");
     println!("Print the difference between set1 and set2");
-    for num in set1.difference(&set2) {
-        println!("{}", num);
-    }
+    for num in set1.difference(&set2) { println!("{}" , num); }
 }

@@ -17,27 +17,32 @@
 */
 fn max_list<'a, T: Ord>(lst: &'a Vec<T>) -> Option<&'a T> {
 
-	let mut max = None; //None is one of the Option values
+    let mut max = None; //None is one of the Option values
 
-	for i in lst.iter() {
-		max = match max { //Max being Option(which is an enum), we deconstruct max to get its  possible values
-			None => Some(i), //if no max. some wrap i in an Option.
-			Some(ref m) if i > *m => Some(i), //m is a reference of the value contained in max
-			_ => max //default value if i <= max
-		}
-	}
-	max
+    for i in lst.iter() {
+        max =
+            match max {
+                 //Max being Option(which is an enum), we deconstruct max to get its  possible values
+                None => Some(i),
+                 //if no max. some wrap i in an Option.
+                Some(ref m) if i > *m => Some(i),
+                 //m is a reference of the value contained in max
+                _ => max
+            } //default value if i <= max
+    }
+    max
 }
 
-fn main()
-{
-	//greater element of a list main
-	let list1 = vec!(1,2,3,4,5,6,7,8,9);
-	println!("Max of first list {}", max_list(&list1).unwrap());
+fn main() {
+    //greater element of a list main
+    let list1 = vec!(1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9);
+    println!("Max of first list {}" , max_list ( & list1 ) . unwrap ( ));
 
-	let list2 = vec!(123,3543,23,432,5,2,34,234,234,2,4,234,23,4,24,25,7,658,68);
-	println!("Max of the second list {}", max_list(&list2).unwrap());
+    let list2 =
+        vec!(123 , 3543 , 23 , 432 , 5 , 2 , 34 , 234 , 234 , 2 , 4 , 234 , 23
+             , 4 , 24 , 25 , 7 , 658 , 68);
+    println!("Max of the second list {}" , max_list ( & list2 ) . unwrap ( ));
 
-	let list3 = vec!('a','b','c','d','e');
-	println!("Max of first list {}", max_list(&list3).unwrap());
+    let list3 = vec!('a' , 'b' , 'c' , 'd' , 'e');
+    println!("Max of first list {}" , max_list ( & list3 ) . unwrap ( ));
 }

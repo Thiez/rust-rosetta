@@ -2,15 +2,11 @@
 
 use std::iter::{range_inclusive, range_step};
 
-fn int_sqrt(n: uint) -> uint {
-    (n as f64).sqrt() as uint
-}
+fn int_sqrt(n: uint) -> uint { (n as f64).sqrt() as uint }
 
 // Return the prime numbers up to limit
 fn simple_sieve(limit: uint) -> Vec<uint> {
-    if limit < 2 {
-        return vec!();
-    }
+    if limit < 2 { return vec!(); }
 
     let mut primes = Vec::from_fn(limit + 1, |_| true);
 
@@ -26,12 +22,11 @@ fn simple_sieve(limit: uint) -> Vec<uint> {
 }
 
 #[cfg(not(test))]
-fn main() {
-    println!("{}", simple_sieve(100))
-}
+fn main() { println!("{}" , simple_sieve ( 100 )) }
 
 #[test]
 fn test_basic() {
     let primes = simple_sieve(30);
-    assert!(primes.as_slice() == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
+    assert!(primes . as_slice ( ) ==
+            [ 2 , 3 , 5 , 7 , 11 , 13 , 17 , 19 , 23 , 29 ]);
 }

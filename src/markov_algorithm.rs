@@ -4,37 +4,43 @@
 struct MarkovRule {
     pattern: ~str,
     replacement: ~str,
-    stop: bool
+    stop: bool,
 }
 
 impl MarkovRule {
     fn new(pattern: ~str, replacement: ~str, stop: bool) -> MarkovRule {
-        MarkovRule {pattern: pattern, replacement: replacement, stop: stop}
+        MarkovRule{pattern: pattern, replacement: replacement, stop: stop,}
     }
 }
 
 // The complete markov algorithm
 struct MarkovAlgorithm {
-    rules: Vec<MarkovRule>
+    rules: Vec<MarkovRule>,
 }
 
 impl MarkovAlgorithm {
     // Parse an algorithm description to build a markov algorithm
     pub fn from_str(s: &str) -> Result<MarkovAlgorithm, ~str> {
         let mut rules: Vec<MarkovRule> = vec!();
-        for line in s.lines()
-            .map(|l| l.trim()) // Ignore whitespace before and after
-            .filter(|l| l.char_len() > 0 && l.char_at(0) != '#') { // Ignore comments
+        for line in
+            s.lines().map(|l|
+                              l.trim()).filter( // Ignore whitespace before and after
+                                               |l|
+                                                   l.char_len() > 0 &&
+                                                       l.char_at(0) != '#')
+            { // Ignore comments
 
-            // check for -> (must be preceded by whitespace)
-            // invalid ruleset if absent
-            // whitespace rules mean there's 2 possible variations: " ->" and "\t->"
-            let arrow_pos = line.find_str(" ->").or_else(|| line.find_str("\t->"));
+             // check for -> (must be preceded by whitespace)
+             // invalid ruleset if absent
+             // whitespace rules mean there's 2 possible variations: " ->" and "\t->"
+
+            let arrow_pos =
+                line.find_str(" ->").or_else(|| line.find_str("\t->"));
             match arrow_pos {
                 None => {
                     // Ruleset is invalid
-                    return Err(format!("Invalid rule \"{}\"", line));
-                }
+                    return Err(format!("Invalid rule \"{}\"" , line));
+                },
                 Some(arrow) => {
                     // extract pattern (trim trailing whitespace)
                     let pattern = line.slice_to(arrow).trim_right();
@@ -44,18 +50,23 @@ impl MarkovAlgorithm {
                     let line_end = line.slice_from(arrow + 3).trim_left();
 
                     // check for . (stop)
-                    let stop = (line_end.char_len() > 0) && (line_end.char_at(0) == '.');
+                    let stop =
+                        (line_end.char_len() > 0) &&
+                            (line_end.char_at(0) == '.');
 
                     // extract replacement
-                    let replacement = if stop {line_end.slice_from(1)} else {line_end};
+                    let replacement =
+                        if stop { line_end.slice_from(1) } else { line_end };
 
                     // add to rules
-                    let new_rule = MarkovRule::new(pattern.to_owned(), replacement.to_owned(), stop);
+                    let new_rule =
+                        MarkovRule::new(pattern.to_owned(),
+                                        replacement.to_owned(), stop);
                     rules.push(new_rule);
                 }
             }
         }
-        let rule_set = MarkovAlgorithm{rules: rules};
+        let rule_set = MarkovAlgorithm{rules: rules,};
         Ok(rule_set)
     }
 
@@ -69,17 +80,20 @@ impl MarkovAlgorithm {
         drop(input);
 
         // loop while operations are possible
-        loop {
+        loop  {
             // find the first rule that is applicable
             // (pattern string is in state)
             let mut rule_iterator = self.rules.iter();
-            let possible_rule = rule_iterator.find(|rule|{
-                state.find_str(rule.pattern).is_some()
-            });
+            let possible_rule =
+                rule_iterator.find(|rule| {
+                                   state.find_str(rule.pattern).is_some() });
 
             match possible_rule {
+
                 // stop if no rule found
-                None => { break; }
+                None => {
+                    break ;
+                },
                 Some(rule) => {
                     // replace the first instance (only) of the pattern
                     // Note: cannot use str::replace as that replaces all instances
@@ -97,7 +111,7 @@ impl MarkovAlgorithm {
                     state = left + rule.replacement + right;
 
                     // stop if required
-                    if rule.stop { break; }
+                    if rule.stop { break ; }
                 }
             }
         }
@@ -110,16 +124,14 @@ impl MarkovAlgorithm {
 struct RCSample {
     ruleset: ~str,
     input: ~str,
-    expected_result: ~str
+    expected_result: ~str,
 }
 
 // Sample markow algorithms from rosetta code
 // The extra whitespaces are trimmed when MarkovAlgorithm::from_str is called
 fn get_samples() -> [RCSample, ..5] {
-    [
-        RCSample {
-            ruleset:
-                "# This rules file is extracted from Wikipedia:
+    [RCSample{ruleset:
+                  "# This rules file is extracted from Wikipedia:
                 # http://en.wikipedia.org/wiki/Markov_Algorithm
                 A -> apple
                 B -> bag
@@ -127,24 +139,22 @@ fn get_samples() -> [RCSample, ..5] {
                 T -> the
                 the shop -> my brother
                 a never used -> .terminating rule".to_owned(),
-            input: "I bought a B of As from T S.".to_owned(),
-            expected_result: "I bought a bag of apples from my brother.".to_owned()
-        },
-        RCSample{
-            ruleset:
-                "# Slightly modified from the rules on Wikipedia
+              input: "I bought a B of As from T S.".to_owned(),
+              expected_result:
+                  "I bought a bag of apples from my brother.".to_owned(),},
+     RCSample{ruleset:
+                  "# Slightly modified from the rules on Wikipedia
                 A -> apple
                 B -> bag
                 S -> .shop
                 T -> the
                 the shop -> my brother
                 a never used -> .terminating rule".to_owned(),
-            input: "I bought a B of As from T S.".to_owned(),
-            expected_result: "I bought a bag of apples from T shop.".to_owned()
-        },
-        RCSample{
-            ruleset:
-                "# BNF Syntax testing rules
+              input: "I bought a B of As from T S.".to_owned(),
+              expected_result:
+                  "I bought a bag of apples from T shop.".to_owned(),},
+     RCSample{ruleset:
+                  "# BNF Syntax testing rules
                 A -> apple
                 WWWW -> with
                 Bgage -> ->.*
@@ -155,12 +165,11 @@ fn get_samples() -> [RCSample, ..5] {
                 T -> the
                 the shop -> my brother
                 a never used -> .terminating rule".to_owned(),
-            input: "I bought a B of As W my Bgage from T S.".to_owned(),
-            expected_result: "I bought a bag of apples with my money from T shop.".to_owned()
-        },
-        RCSample{
-            ruleset:
-                "### Unary Multiplication Engine, for testing Markov Algorithm implementations
+              input: "I bought a B of As W my Bgage from T S.".to_owned(),
+              expected_result:
+                  "I bought a bag of apples with my money from T shop.".to_owned(),},
+     RCSample{ruleset:
+                  "### Unary Multiplication Engine, for testing Markov Algorithm implementations
                 ### By Donal Fellows.
                 # Unary addition engine
                 _+1 -> _1+
@@ -188,12 +197,10 @@ fn get_samples() -> [RCSample, ..5] {
                 _1 -> 1
                 1+_ -> 1
                 _+_ -> ".to_owned(),
-            input: "_1111*11111_".to_owned(),
-            expected_result: "11111111111111111111".to_owned()
-        },
-        RCSample{
-            ruleset:
-                "# Turing machine: three-state busy beaver
+              input: "_1111*11111_".to_owned(),
+              expected_result: "11111111111111111111".to_owned(),},
+     RCSample{ruleset:
+                  "# Turing machine: three-state busy beaver
                 #
                 # state A, symbol 0 => write 1, move right, new state B
                 A0 -> 1B
@@ -211,10 +218,8 @@ fn get_samples() -> [RCSample, ..5] {
                 # state C, symbol 1 => write 1, move left, halt
                 0C1 -> H01
                 1C1 -> H11".to_owned(),
-            input: "000000A000000".to_owned(),
-            expected_result: "00011H1111000".to_owned()
-        },
-    ]
+              input: "000000A000000".to_owned(),
+              expected_result: "00011H1111000".to_owned(),}]
 }
 
 #[cfg(not(test))]
@@ -222,10 +227,10 @@ fn main() {
     for (index, sample) in get_samples().iter().enumerate() {
         match MarkovAlgorithm::from_str(sample.ruleset) {
             Ok(algorithm) => {
-                println!("Sample {}", (index + 1));
-                println!("Output: {}", algorithm.apply(sample.input));
-            }
-            Err(message) => println!("{}", message)
+                println!("Sample {}" , ( index + 1 ));
+                println!("Output: {}" , algorithm . apply ( sample . input ));
+            },
+            Err(message) => println!("{}" , message)
         }
     }
 }
@@ -234,8 +239,10 @@ fn main() {
 fn test_samples() {
     for sample in get_samples().iter() {
         match MarkovAlgorithm::from_str(sample.ruleset) {
-            Ok(algorithm) => assert!(sample.expected_result == algorithm.apply(sample.input)),
-            Err(message) => fail!("{}", message)
+            Ok(algorithm) =>
+            assert!(sample . expected_result == algorithm . apply
+                    ( sample . input )),
+            Err(message) => fail!("{}" , message)
         }
     }
 }

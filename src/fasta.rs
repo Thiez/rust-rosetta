@@ -19,17 +19,14 @@ fn format_fasta<T: Buffer>(reader: &mut T) -> ~str {
         let ln = ln.as_slice().trim();
 
         // Lines that begin with '>' require special treatment
-        if ln.slice(0,1) == ">" {
-            if result.len() > 0 {
-                result.push_str("\n");
-            }
+        if ln.slice(0, 1) == ">" {
+            if result.len() > 0 { result.push_str("\n"); }
 
             // Push skipping the '>'
             result.push_str(ln.slice_from(1) + ": ");
-        }
-
-        // Other lines are just pushed
-        else {
+        } else 
+         // Other lines are just pushed
+         {
             result.push_str(ln);
         }
     }
@@ -42,14 +39,11 @@ fn read_file() -> ~str {
 }
 
 #[cfg(not(test))]
-fn main() {
-    let s = read_file();
-    println!("{}", s);
-}
+fn main() { let s = read_file(); println!("{}" , s); }
 
 #[test]
 fn test_format_fasta() {
     let s = read_file();
-    assert_eq!(s.as_slice(), "Rosetta_Example_1: THERECANBENOSPACE
-Rosetta_Example_2: THERECANBESEVERALLINESBUTTHEYALLMUSTBECONCATENATED");
+    assert_eq!(s . as_slice ( ) ,
+               "Rosetta_Example_1: THERECANBENOSPACE\nRosetta_Example_2: THERECANBESEVERALLINESBUTTHEYALLMUSTBECONCATENATED");
 }

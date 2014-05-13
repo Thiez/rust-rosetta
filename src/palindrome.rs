@@ -13,7 +13,7 @@ fn palindrome(string: &str) -> bool {
 
     // The word is a palindrome if each tuple contains two times
     // the same character
-    both_directions.all(|(a, b)| {a == b})
+    both_directions.all(|(a, b)| { a == b })
 }
 
 // Demonstration code
@@ -21,15 +21,16 @@ fn palindrome(string: &str) -> bool {
 fn main() {
     let test_strings = ["nope", "eevee", "lalala", "rust", "lalalal"];
     for &string in test_strings.iter() {
-        println!("{}: {}", string, palindrome(string));
+        println!("{}: {}" , string , palindrome ( string ));
     }
 }
 
 #[test]
 fn test_palindromes() {
     let palindromes = ["eevee", "lalalal", "オオオオ", "", "anna"];
-    let non_palindromes = ["nope", "lalala", "car", "rain", "house", "computer", "rust"];
+    let non_palindromes =
+        ["nope", "lalala", "car", "rain", "house", "computer", "rust"];
 
-    assert!(palindromes.iter().all(|&s| palindrome(s)));
-    assert!(non_palindromes.iter().all(|&s| !palindrome(s)));
+    assert!(palindromes . iter ( ) . all ( | & s | palindrome ( s ) ));
+    assert!(non_palindromes . iter ( ) . all ( | & s | ! palindrome ( s ) ));
 }
